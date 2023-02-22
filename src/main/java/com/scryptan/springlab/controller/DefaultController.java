@@ -2,7 +2,7 @@ package com.scryptan.springlab.controller;
 
 import com.scryptan.springlab.model.Request;
 import com.scryptan.springlab.model.Response;
-import com.scryptan.springlab.service.IModifyService;
+import com.scryptan.springlab.service.IModifyResponseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DefaultController {
 
-    private final IModifyService modifyUid;
-    private final IModifyService modifyCode;
+    private final IModifyResponseService modifyUid;
+    private final IModifyResponseService modifyCode;
 
     @Autowired
-    public DefaultController(@Qualifier("ModifyUid") IModifyService modifyUid, @Qualifier("ModifyCode") IModifyService modifyCode) {
+    public DefaultController(@Qualifier("ModifyResponseUid") IModifyResponseService modifyUid, @Qualifier("ModifyResponseCode") IModifyResponseService modifyCode) {
         this.modifyUid = modifyUid;
 
         this.modifyCode = modifyCode;
