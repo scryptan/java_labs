@@ -1,47 +1,71 @@
 package com.scryptan.springlab.controller;
 
+import com.scryptan.springlab.dao.StudentRepository;
 import com.scryptan.springlab.entity.Student;
-import com.scryptan.springlab.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.util.Optional;
 
 @Slf4j
-@RestController
-@RequestMapping("api/students")
+@Controller
 public class StudentsController {
 
-    final StudentService studentService;
+    final StudentRepository studentRepository;
 
     @Autowired
-    public StudentsController(StudentService studentService) {
-        this.studentService = studentService;
+    public StudentsController(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    @GetMapping()
-    public List<Student> getAllStudents(){
-        return studentService.getAllStudents();
+    @GetMapping({"list", ""})
+    public ModelAndView getAllStudents(){
+        log.info("list -> connection");
+
+        ModelAndView mav = new ModelAndView("list-students");
+        mav.addObject("students", studentRepository.findAll());
+
+        return mav;
     }
 
-    @GetMapping("{id}")
-    public Student getStudent(@PathVariable int id){
-        return studentService.getStudent(id);
+    @GetMapping("addStudentForm")
+    public ModelAndView addStudentForm(){
+
+        ModelAndView mav = new ModelAndView("add-student-form");
+        Student student = new Student();
+        mav.addObject("student", student);
+        return mav;
     }
 
-    @PostMapping()
-    public Student saveStudent(@RequestBody Student student){
-        return studentService.saveStudent(student);
+    @PostMapping("saveStudent")
+    public String saveStudent(@ModelAttribute Student student){
+        studentRepository.save(student);
+        return "redirect:list";
     }
 
-    @PutMapping()
-    public Student updateStudent(@RequestBody Student student){
-        return studentService.saveStudent(student);
+    @GetMapping("showUpdateForm")
+    public ModelAndView showUpdateForm(@RequestParam Long studentId){
+
+        ModelAndView mav = new ModelAndView("add-student-form");
+        Optional<Student> optionalStudent = studentRepository.findById(studentId);
+        Student student = new Student();
+
+        if(optionalStudent.isPresent())
+            student = optionalStudent.get();
+
+        mav.addObject("student", student);
+        return mav;
     }
 
-    @DeleteMapping("{id}")
-    public void deleteStudent(@PathVariable int id){
-        studentService.deleteStudent(id);
+    @GetMapping("deleteStudent")
+    public String deleteStudent(@RequestParam Long studentId){
+        studentRepository.deleteById(studentId);
+        return "redirect:list";
     }
 }
