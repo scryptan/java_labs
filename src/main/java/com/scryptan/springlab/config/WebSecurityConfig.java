@@ -26,6 +26,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/register/**").permitAll()
                 .requestMatchers("/index").permitAll()
                 .requestMatchers("/users").hasRole("ADMIN")
+                .requestMatchers("/books/**").authenticated()
                 .requestMatchers("/").authenticated()
                 .requestMatchers("/list").authenticated()
                 .requestMatchers("/addStudentForm").authenticated()
